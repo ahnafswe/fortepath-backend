@@ -1,9 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma.ts";
-import { admin as adminCore } from "better-auth/plugins";
-import { adminClient } from "better-auth/client/plugins";
-import { ac, admin, student, tutor } from "./permissions.ts";
+import { UserRole } from "../../generated/prisma/enums.ts";
 
 //* Better-Auth Initialization
 const auth = betterAuth({
@@ -33,19 +31,11 @@ const auth = betterAuth({
 			scope: ["openid", "email", "profile"],
 		},
 	},
-	// Plugins
-	plugins: [
-		adminCore({
-			ac,
-			bannedUserMessage: "You are banned from FortePath",
-			defaultRole: "student",
-			roles: { admin, student, tutor },
-		}),
-		adminClient({
-			ac,
-			roles: { admin, student, tutor },
-		}),
-	],
+	user: {
+		additionalFields: {
+			role: { type: "string", defaultValue: UserRole.STUDENT },
+		},
+	},
 });
 
 export { auth };

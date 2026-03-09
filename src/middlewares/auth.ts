@@ -1,15 +1,6 @@
+import { UserRole } from "../../generated/prisma/enums.ts";
 import { auth as betterAuth } from "../lib/auth.ts";
-import { NextFunction, Request, Response, Router } from "express";
-
-// Express Router
-const router = Router();
-
-// Enum - User Role
-enum UserRole {
-	STUDENT = "STUDENT",
-	TUTOR = "TUTOR",
-	ADMIN = "ADMIN",
-}
+import { NextFunction, Request, Response } from "express";
 
 // Global Type of req.user
 declare global {
@@ -48,10 +39,10 @@ const auth = (...roles: UserRole[]) => {
 				name: session.user.name,
 				email: session.user.email,
 				emailVerified: session.user.emailVerified,
-				role: session.user.role as string,
+				role: session.user.role,
 			};
 			// If access forbidden
-			if (roles.length && roles.includes(req.user.role as UserRole)) {
+			if (roles.length && !roles.includes(req.user.role as UserRole)) {
 				return res.status(403).json({
 					success: false,
 					message: "You lack access to this operation",

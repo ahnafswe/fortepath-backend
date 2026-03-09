@@ -1,4 +1,4 @@
-import { TutorProfile, TutorCategory } from "../../../generated/prisma/client.ts";
+import { TutorProfile, TutorCategory, UserRole } from "../../../generated/prisma/client.ts";
 import { prisma } from "../../lib/prisma.ts";
 
 //* Register a Tutor
@@ -9,7 +9,7 @@ const registerTutor = async (
 	const user = await prisma.user.findUniqueOrThrow({
 		where: {
 			id: data.userId,
-			role: "tutor",
+			role: UserRole.TUTOR,
 		},
 	});
 	// Insertion
@@ -131,7 +131,14 @@ const getTutors = async (q: {
 				select: {
 					id: true,
 					name: true,
+					image: true,
 					email: true,
+					tutorReviews: {
+						select: {
+							rating: true,
+							feedback: true,
+						},
+					},
 				},
 			},
 			tutorCategories: {
@@ -139,11 +146,6 @@ const getTutors = async (q: {
 					category: {
 						select: { id: true, name: true, slug: true, description: true },
 					},
-				},
-			},
-			reviews: {
-				select: {
-					rating: true,
 				},
 			},
 		},
@@ -154,41 +156,47 @@ const getTutors = async (q: {
 
 //* Retrieve a Tutor
 const getTutor = async (id: string): Promise<TutorProfile> => {
-	const result = await prisma.tutorProfile.findUniqueOrThrow({
+	const result = await prisma.tutorProfile.findFirstOrThrow({
 		where: {
-			id,
+			OR: [{ id }, { userId: id }],
 		},
 		include: {
 			user: {
 				select: {
 					id: true,
 					name: true,
-				},
-			},
-			reviews: {
-				select: {
-					id: true,
-					student: {
-						select: {
-							id: true,
-							name: true,
+					email: true,
+					image: true,
+					tutorBookings: {
+						include: {
+							student: {
+								select: {
+									id: true,
+									name: true,
+									image: true,
+								},
+							},
+						},
+						omit: {
+							studentId: true,
+							tutorId: true,
 						},
 					},
-					rating: true,
-					feedback: true,
-				},
-			},
-			bookings: {
-				select: {
-					id: true,
-					student: {
+					tutorReviews: {
 						select: {
 							id: true,
-							name: true,
+							student: {
+								select: {
+									id: true,
+									name: true,
+									image: true,
+								},
+							},
+							rating: true,
+							feedback: true,
+							createdAt: true,
 						},
 					},
-					topic: true,
-					status: true,
 				},
 			},
 			tutorCategories: {
@@ -221,7 +229,7 @@ const addCategory = async (data: TutorCategory): Promise<TutorCategory> => {
 		where: {
 			id: data.tutorId,
 			user: {
-				role: "tutor",
+				role: UserRole.TUTOR,
 			},
 		},
 	});

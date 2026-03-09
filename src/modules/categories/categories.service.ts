@@ -66,6 +66,13 @@ const getCategories = async (q: {
 		},
 		skip: presentation.skip,
 		take: presentation.take,
+		include: {
+			tutorCategories: {
+				select: {
+					tutorId: true,
+				},
+			},
+		},
 	});
 	// Return
 	return { categories, total: categories.length };

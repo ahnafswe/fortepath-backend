@@ -1,4 +1,4 @@
-import { Review } from "../../../generated/prisma/client.ts";
+import { Review, UserRole } from "../../../generated/prisma/client.ts";
 import { prisma } from "../../lib/prisma.ts";
 
 //* Create a Review
@@ -8,17 +8,15 @@ const createReview = async (data: Omit<Review, "id" | "createdAt">): Promise<Rev
 		where: {
 			id: data.studentId as string,
 			role: {
-				in: ["student", "admin"],
+				in: [UserRole.STUDENT, UserRole.ADMIN],
 			},
 		},
 	});
 	// Validate tutor's existence and role
-	const tutor = await prisma.tutorProfile.findUniqueOrThrow({
+	const tutor = await prisma.user.findUniqueOrThrow({
 		where: {
 			id: data.tutorId,
-			user: {
-				role: "tutor",
-			},
+			role: UserRole.TUTOR,
 		},
 	});
 	// Insertion
@@ -34,12 +32,7 @@ const createReview = async (data: Omit<Review, "id" | "createdAt">): Promise<Rev
 			tutor: {
 				select: {
 					id: true,
-					user: {
-						select: {
-							id: true,
-							name: true,
-						},
-					},
+					name: true,
 				},
 			},
 		},
@@ -85,11 +78,15 @@ const getReviews = async (q: {
 					id: true,
 					name: true,
 					image: true,
+					email: true,
 				},
 			},
 			tutor: {
 				select: {
 					id: true,
+					name: true,
+					image: true,
+					email: true,
 				},
 			},
 		},

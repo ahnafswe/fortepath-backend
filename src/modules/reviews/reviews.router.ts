@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { reviewsController } from "./reviews.controller.ts";
-import { auth, UserRole } from "../../middlewares/auth.ts";
+import { UserRole } from "../../../generated/prisma/enums.ts";
+import { auth } from "../../middlewares/auth.ts";
 
 const router = Router();
 

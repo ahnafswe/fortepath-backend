@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { bookingsController } from "./bookings.controller.ts";
-import { auth, UserRole } from "../../middlewares/auth.ts";
+import { auth } from "../../middlewares/auth.ts";
+import { UserRole } from "../../../generated/prisma/enums.ts";
 
 const router = Router();
 
@@ -9,9 +10,7 @@ router.post("/", auth(UserRole.STUDENT, UserRole.ADMIN), bookingsController.crea
 // GET /
 router.get(
 	"/",
-	auth(UserRole.STUDENT),
-	auth(UserRole.TUTOR),
-	auth(UserRole.ADMIN),
+	auth(UserRole.STUDENT, UserRole.TUTOR, UserRole.ADMIN),
 	bookingsController.getBookings,
 );
 

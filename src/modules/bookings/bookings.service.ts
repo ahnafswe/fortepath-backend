@@ -1,4 +1,4 @@
-import { Booking, BookingStatus } from "../../../generated/prisma/client.ts";
+import { Booking, BookingStatus, UserRole } from "../../../generated/prisma/client.ts";
 import { prisma } from "../../lib/prisma.ts";
 
 //* Create a Booking
@@ -6,19 +6,17 @@ const createBooking = async (
 	data: Omit<Booking, "id" | "createdAt" | "updatedAt" | "status">,
 ): Promise<Omit<Booking, "updatedAt">> => {
 	// Validate tutor's existence
-	const tutor = await prisma.tutorProfile.findUniqueOrThrow({
+	const tutor = await prisma.user.findUniqueOrThrow({
 		where: {
 			id: data.tutorId as string,
-			user: {
-				role: "tutor",
-			},
+			role: UserRole.TUTOR,
 		},
 	});
 	// Validate student's existence
 	const student = await prisma.user.findUniqueOrThrow({
 		where: {
 			id: data.studentId as string,
-			role: "student",
+			role: UserRole.STUDENT,
 		},
 	});
 	// Insertion
@@ -34,11 +32,7 @@ const createBooking = async (
 			tutor: {
 				select: {
 					id: true,
-					user: {
-						select: {
-							name: true,
-						},
-					},
+					name: true,
 				},
 			},
 		},
@@ -95,12 +89,8 @@ const getBookings = async (q: {
 			tutor: {
 				select: {
 					id: true,
-					user: {
-						select: {
-							name: true,
-							image: true,
-						},
-					},
+					name: true,
+					image: true,
 				},
 			},
 			student: {
@@ -108,6 +98,7 @@ const getBookings = async (q: {
 					id: true,
 					name: true,
 					image: true,
+					email: true,
 				},
 			},
 		},
