@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { bookingsController } from "./bookings.controller.ts";
 import { auth } from "../../middlewares/auth.ts";
-import { UserRole } from "../../../generated/prisma/enums.ts";
+import { UserRole } from "../../generated/prisma/enums.ts";
 
 const router = Router();
 

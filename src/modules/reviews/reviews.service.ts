@@ -1,4 +1,4 @@
-import { Review, UserRole } from "../../../generated/prisma/client.ts";
+import { Review, UserRole } from "../../generated/prisma/client.ts";
 import { prisma } from "../../lib/prisma.ts";
 
 //* Create a Review

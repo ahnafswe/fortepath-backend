@@ -1,4 +1,4 @@
-import { UserRole } from "../../generated/prisma/enums.ts";
+import { UserRole } from "../generated/prisma/enums.ts";
 import { auth as betterAuth } from "../lib/auth.ts";
 import { NextFunction, Request, Response } from "express";
 

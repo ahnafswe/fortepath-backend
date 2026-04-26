@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Category } from "../../../generated/prisma/client.ts";
+import { Category } from "../../generated/prisma/client.ts";
 import { categoriesService } from "./categories.service.ts";
 
 //* Create a Category

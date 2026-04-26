@@ -1,4 +1,4 @@
-import { TutorProfile, TutorCategory, UserRole } from "../../../generated/prisma/client.ts";
+import { TutorProfile, TutorCategory, UserRole } from "../../generated/prisma/client.ts";
 import { prisma } from "../../lib/prisma.ts";
 
 //* Register a Tutor

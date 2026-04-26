@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { TutorProfile, TutorCategory } from "../../../generated/prisma/client.ts";
+import { TutorProfile, TutorCategory } from "../../generated/prisma/client.ts";
 import { tutorsService } from "./tutors.service.ts";
 
 //* Register a Tutor

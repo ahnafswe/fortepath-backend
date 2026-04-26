@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { User } from "../../../generated/prisma/client.ts";
+import { User } from "../../generated/prisma/client.ts";
 import { usersService } from "./users.service.ts";
 
 //* Retrieve Users

@@ -1,4 +1,4 @@
-import { User } from "../../../generated/prisma/client.ts";
+import { User } from "../../generated/prisma/client.ts";
 import { prisma } from "../../lib/prisma.ts";
 
 //* Retrieve Users
