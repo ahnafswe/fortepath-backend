@@ -36,7 +36,7 @@ app.get("/", (_req, res) => {
 	//* 200 Success Response
 	res.status(200).json({
 		success: true,
-		message: "Greetings to you, from FortePath",
+		message: "Welcome to FortePath's server",
 	});
 });
 

@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "review" ALTER COLUMN "rating" SET DATA TYPE DECIMAL(2,0);

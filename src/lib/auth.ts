@@ -36,6 +36,20 @@ const auth = betterAuth({
 			role: { type: "string", defaultValue: UserRole.STUDENT },
 		},
 	},
+	session: {
+		cookieCache: {
+			enabled: true,
+			maxAge: 5 * 60, // 5 minutes
+		},
+	},
+	advanced: {
+		cookiePrefix: "better-auth",
+		useSecureCookies: process.env.NODE_ENV === "production",
+		crossSubDomainCookies: {
+			enabled: false,
+		},
+		disableCSRFCheck: true,
+	},
 });
 
 export { auth };
