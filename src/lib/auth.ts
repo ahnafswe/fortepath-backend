@@ -8,7 +8,7 @@ const auth = betterAuth({
 	// App and Basic Settings
 	appName: "FortePath",
 	basePath: "/api/v1/auth",
-	trustedOrigins: [process.env.APP_URL!],
+	trustedOrigins: [process.env.APP_URL!, "http://localhost:3000"],
 	// Database Settings
 	database: prismaAdapter(prisma, {
 		provider: "postgresql",
@@ -35,6 +35,20 @@ const auth = betterAuth({
 		additionalFields: {
 			role: { type: "string", defaultValue: UserRole.STUDENT },
 		},
+	},
+	session: {
+		cookieCache: {
+			enabled: true,
+			maxAge: 15 * 60,
+		},
+	},
+	advanced: {
+		cookiePrefix: "better-auth",
+		useSecureCookies: process.env.NODE_ENV === "production",
+		crossSubDomainCookies: {
+			enabled: false,
+		},
+		disableCSRFCheck: true,
 	},
 });
 

@@ -10,12 +10,12 @@ async function main() {
 		await prisma.$connect();
 		// console.log("[SUCCESS] Connected to DB");
 		// Listen to server [DEV]
-		// app.listen(PORT, () => {
-		// 	console.log(`[SUCCESS] FortePath server is running on localhost:${PORT}`);
-		// });
+		app.listen(PORT, () => {
+			console.log(`[SUCCESS] FortePath server is running on localhost:${PORT}`);
+		});
 	} catch (err) {
 		// Log error
-		// console.error("[ERROR] A server error:", err);
+		console.error("[ERROR] A server error:", err);
 		// Disconnect from DB
 		await prisma.$disconnect();
 		process.exit(1);
