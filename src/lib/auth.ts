@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma.ts";
 import { UserRole } from "../../generated/prisma/enums.ts";
+import { oAuthProxy } from "better-auth/plugins";
 
 //* Better-Auth Initialization
 const auth = betterAuth({
@@ -36,20 +37,29 @@ const auth = betterAuth({
 			role: { type: "string", defaultValue: UserRole.STUDENT },
 		},
 	},
-	session: {
-		cookieCache: {
-			enabled: true,
-			maxAge: 15 * 60,
-		},
-	},
 	advanced: {
-		cookiePrefix: "better-auth",
-		useSecureCookies: process.env.NODE_ENV === "production",
-		crossSubDomainCookies: {
-			enabled: false,
+		cookies: {
+			session_token: {
+				name: "session_token",
+				attributes: {
+					httpOnly: true,
+					secure: true,
+					sameSite: "none",
+					partitioned: true,
+				},
+			},
+			state: {
+				name: "session_token",
+				attributes: {
+					httpOnly: true,
+					secure: true,
+					sameSite: "none",
+					partitioned: true,
+				},
+			},
 		},
-		disableCSRFCheck: true,
 	},
+	plugins: [oAuthProxy()],
 });
 
 export { auth };
