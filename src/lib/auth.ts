@@ -8,7 +8,7 @@ const auth = betterAuth({
 	// App and Basic Settings
 	appName: "FortePath",
 	basePath: "/api/v1/auth",
-	trustedOrigins: [process.env.APP_URL!],
+	trustedOrigins: [process.env.APP_URL!, "http://localhost:3000"],
 	// Database Settings
 	database: prismaAdapter(prisma, {
 		provider: "postgresql",
