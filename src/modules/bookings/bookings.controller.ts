@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Booking, BookingStatus } from "../../generated/prisma/client.ts";
+import { Booking, BookingStatus } from "../../../generated/prisma/client.ts";
 import { bookingsService } from "./bookings.service.ts";
 
 //* Create a Booking

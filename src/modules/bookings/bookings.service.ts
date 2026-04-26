@@ -1,4 +1,4 @@
-import { Booking, BookingStatus, UserRole } from "../../generated/prisma/client.ts";
+import { Booking, BookingStatus, UserRole } from "../../../generated/prisma/client.ts";
 import { prisma } from "../../lib/prisma.ts";
 
 //* Create a Booking

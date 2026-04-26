@@ -1,14 +1,14 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma.ts";
-import { UserRole } from "../generated/prisma/enums.ts";
+import { UserRole } from "../../generated/prisma/enums.ts";
 
 //* Better-Auth Initialization
 const auth = betterAuth({
 	// App and Basic Settings
 	appName: "FortePath",
 	basePath: "/api/v1/auth",
-	trustedOrigins: [process.env.APP_URL!, "http://localhost:3000"],
+	trustedOrigins: [process.env.APP_URL!],
 	// Database Settings
 	database: prismaAdapter(prisma, {
 		provider: "postgresql",
@@ -35,20 +35,6 @@ const auth = betterAuth({
 		additionalFields: {
 			role: { type: "string", defaultValue: UserRole.STUDENT },
 		},
-	},
-	session: {
-		cookieCache: {
-			enabled: true,
-			maxAge: 5 * 60, // 5 minutes
-		},
-	},
-	advanced: {
-		cookiePrefix: "better-auth",
-		useSecureCookies: process.env.NODE_ENV === "production",
-		crossSubDomainCookies: {
-			enabled: false,
-		},
-		disableCSRFCheck: true,
 	},
 });
 

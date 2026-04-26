@@ -1,4 +1,4 @@
-import { Category } from "../../generated/prisma/client.ts";
+import { Category } from "../../../generated/prisma/client.ts";
 import { prisma } from "../../lib/prisma.ts";
 
 //* Create a Category

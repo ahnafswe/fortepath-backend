@@ -1,9 +1,6 @@
 -- CreateEnum
 CREATE TYPE "BookingStatus" AS ENUM ('CONFIRMED', 'COMPLETED', 'CANCELLED');
 
--- CreateEnum
-CREATE TYPE "UserRole" AS ENUM ('STUDENT', 'TUTOR', 'ADMIN');
-
 -- CreateTable
 CREATE TABLE "user" (
     "id" TEXT NOT NULL,
@@ -11,7 +8,7 @@ CREATE TABLE "user" (
     "email" TEXT NOT NULL,
     "emailVerified" BOOLEAN NOT NULL DEFAULT false,
     "image" TEXT,
-    "role" "UserRole" NOT NULL DEFAULT 'STUDENT',
+    "role" TEXT,
     "banned" BOOLEAN DEFAULT false,
     "banReason" TEXT,
     "banExpires" TIMESTAMP(3),
@@ -46,7 +43,6 @@ CREATE TABLE "tutor_profile" (
     "userId" TEXT NOT NULL,
     "designation" VARCHAR(60),
     "bio" VARCHAR(250),
-    "hourlyRate" SMALLINT NOT NULL,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ NOT NULL,
 
@@ -73,7 +69,7 @@ CREATE TABLE "category" (
     "id" TEXT NOT NULL,
     "name" VARCHAR(30) NOT NULL,
     "slug" VARCHAR(30) NOT NULL,
-    "description" VARCHAR(200),
+    "description" VARCHAR(100),
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ NOT NULL,
 
@@ -91,9 +87,9 @@ CREATE TABLE "tutor_category" (
 -- CreateTable
 CREATE TABLE "review" (
     "id" TEXT NOT NULL,
-    "studentId" TEXT,
+    "studentId" TEXT NOT NULL,
     "tutorId" TEXT NOT NULL,
-    "rating" DECIMAL(2,1) NOT NULL,
+    "rating" DECIMAL(1,0) NOT NULL,
     "feedback" VARCHAR(200) NOT NULL,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -103,15 +99,14 @@ CREATE TABLE "review" (
 -- CreateTable
 CREATE TABLE "booking" (
     "id" TEXT NOT NULL,
-    "studentId" TEXT,
-    "tutorId" TEXT,
+    "studentId" TEXT NOT NULL,
+    "tutorId" TEXT NOT NULL,
     "topic" VARCHAR(100) NOT NULL,
     "dueTime" TIMESTAMPTZ NOT NULL,
     "duration" SMALLINT NOT NULL,
     "notes" VARCHAR(200),
     "status" "BookingStatus" NOT NULL DEFAULT 'CONFIRMED',
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMPTZ NOT NULL,
 
     CONSTRAINT "booking_pkey" PRIMARY KEY ("id")
 );
@@ -171,9 +166,6 @@ CREATE INDEX "verification_identifier_idx" ON "verification"("identifier");
 ALTER TABLE "account" ADD CONSTRAINT "account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tutor_profile" ADD CONSTRAINT "tutor_profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -183,13 +175,7 @@ ALTER TABLE "tutor_category" ADD CONSTRAINT "tutor_category_tutorId_fkey" FOREIG
 ALTER TABLE "tutor_category" ADD CONSTRAINT "tutor_category_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "review" ADD CONSTRAINT "review_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "review" ADD CONSTRAINT "review_tutorId_fkey" FOREIGN KEY ("tutorId") REFERENCES "tutor_profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "review" ADD CONSTRAINT "review_tutorId_fkey" FOREIGN KEY ("tutorId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "booking" ADD CONSTRAINT "booking_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "booking" ADD CONSTRAINT "booking_tutorId_fkey" FOREIGN KEY ("tutorId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "booking" ADD CONSTRAINT "booking_tutorId_fkey" FOREIGN KEY ("tutorId") REFERENCES "tutor_profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;

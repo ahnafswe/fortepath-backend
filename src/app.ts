@@ -16,7 +16,7 @@ const app: Application = express();
 app.use(express.json());
 app.use(
 	cors({
-		origin: [process.env.APP_URL!, "http://localhost:3000"],
+		origin: process.env.APP_URL,
 		credentials: true,
 	}),
 );
@@ -36,7 +36,7 @@ app.get("/", (_req, res) => {
 	//* 200 Success Response
 	res.status(200).json({
 		success: true,
-		message: "Welcome to FortePath's server",
+		message: "Greetings to you, from FortePath",
 	});
 });
 

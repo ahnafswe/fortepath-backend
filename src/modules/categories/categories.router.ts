@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { categoriesController } from "./categories.controller.ts";
-import { UserRole } from "../../generated/prisma/enums.ts";
+import { UserRole } from "../../../generated/prisma/enums.ts";
 import { auth } from "../../middlewares/auth.ts";
 
 const router = Router();

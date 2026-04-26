@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Review } from "../../generated/prisma/client.ts";
+import { Review } from "../../../generated/prisma/client.ts";
 import { reviewsService } from "./reviews.service.ts";
 
 //* Create a Review
