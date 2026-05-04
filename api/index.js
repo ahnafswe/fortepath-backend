@@ -88,6 +88,7 @@ var adapter = new PrismaPg({ connectionString });
 var prisma = new PrismaClient({ adapter });
 
 // src/lib/auth.ts
+import { oAuthProxy } from "better-auth/plugins";
 var auth = betterAuth({
   // App and Basic Settings
   appName: "FortePath",
@@ -120,20 +121,29 @@ var auth = betterAuth({
       role: { type: "string", defaultValue: UserRole.STUDENT }
     }
   },
-  session: {
-    cookieCache: {
-      enabled: true,
-      maxAge: 15 * 60
+  advanced: {
+    cookies: {
+      session_token: {
+        name: "session_token",
+        attributes: {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          partitioned: true
+        }
+      },
+      state: {
+        name: "session_token",
+        attributes: {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          partitioned: true
+        }
+      }
     }
   },
-  advanced: {
-    cookiePrefix: "better-auth",
-    useSecureCookies: process.env.NODE_ENV === "production",
-    crossSubDomainCookies: {
-      enabled: false
-    },
-    disableCSRFCheck: true
-  }
+  plugins: [oAuthProxy()]
 });
 
 // src/modules/tutors/tutors.router.ts
@@ -1100,18 +1110,9 @@ router5.get("/", auth2(UserRole.ADMIN), usersController.getUsers);
 // src/app.ts
 var app = express();
 app.use(express.json());
-var allowedOrigins = [process.env.APP_URL || "http://localhost:3000"].filter(Boolean);
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      const isAllowed = allowedOrigins.includes(origin) || /^https:\/\/next-blog-client.*\.vercel\.app$/.test(origin) || /^https:\/\/.*\.vercel\.app$/.test(origin);
-      if (isAllowed) {
-        callback(null, true);
-      } else {
-        callback(new Error(`Origin ${origin} not allowed by CORS`));
-      }
-    },
+    origin: process.env.APP_URL,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
