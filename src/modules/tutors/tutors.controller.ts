@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import { TutorProfile, TutorCategory } from "../../../generated/prisma/client.ts";
 import { tutorsService } from "./tutors.service.ts";
+import { BatchPayload } from "../../../generated/prisma/internal/prismaNamespace.ts";
 
 //* Register a Tutor
 const registerTutor = async (req: Request, res: Response) => {
 	try {
 		// Insert to DB
-		const tutor: Omit<TutorProfile, "updatedAt"> = await tutorsService.registerTutor(
-			req.body,
-		);
+		const tutor: { tutor: Omit<TutorProfile, "updatedAt">; tutorCategories: BatchPayload } =
+			await tutorsService.registerTutor(req.body);
 		// 201 success response
 		res.status(201).json({
 			success: true,

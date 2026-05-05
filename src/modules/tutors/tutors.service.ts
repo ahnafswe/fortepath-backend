@@ -1,10 +1,11 @@
 import { TutorProfile, TutorCategory, UserRole } from "../../../generated/prisma/client.ts";
+import { BatchPayload } from "../../../generated/prisma/internal/prismaNamespace.ts";
 import { prisma } from "../../lib/prisma.ts";
 
 //* Register a Tutor
 const registerTutor = async (
-	data: Omit<TutorProfile, "id" | "createdAt" | "updatedAt">,
-): Promise<Omit<TutorProfile, "updatedAt">> => {
+	data: Omit<TutorProfile, "id" | "createdAt" | "updatedAt"> & { categoryIds: string[] },
+): Promise<{ tutor: Omit<TutorProfile, "updatedAt">; tutorCategories: BatchPayload }> => {
 	// Validate user's existence
 	const user = await prisma.user.findUniqueOrThrow({
 		where: {
@@ -14,7 +15,12 @@ const registerTutor = async (
 	});
 	// Insertion
 	const result = await prisma.tutorProfile.create({
-		data,
+		data: {
+			userId: data.userId,
+			designation: data.designation,
+			bio: data.bio,
+			hourlyRate: data.hourlyRate,
+		},
 		include: {
 			user: {
 				select: {
@@ -24,8 +30,19 @@ const registerTutor = async (
 			},
 		},
 	});
+	const tutorCategoriesResult = await prisma.tutorCategory.createMany({
+		data: [
+			...data.categoryIds.map((categoryId) => ({
+				tutorId: result.id,
+				categoryId,
+			})),
+		],
+	});
 	// Return
-	return result;
+	return {
+		tutor: result,
+		tutorCategories: tutorCategoriesResult,
+	};
 };
 
 //* Retrieve Tutors

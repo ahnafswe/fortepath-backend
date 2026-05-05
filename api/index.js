@@ -158,7 +158,12 @@ var registerTutor = async (data) => {
     }
   });
   const result = await prisma.tutorProfile.create({
-    data,
+    data: {
+      userId: data.userId,
+      designation: data.designation,
+      bio: data.bio,
+      hourlyRate: data.hourlyRate
+    },
     include: {
       user: {
         select: {
@@ -168,7 +173,18 @@ var registerTutor = async (data) => {
       }
     }
   });
-  return result;
+  const tutorCategoriesResult = await prisma.tutorCategory.createMany({
+    data: [
+      ...data.categoryIds.map((categoryId) => ({
+        tutorId: result.id,
+        categoryId
+      }))
+    ]
+  });
+  return {
+    tutor: result,
+    tutorCategories: tutorCategoriesResult
+  };
 };
 var getTutors = async (q) => {
   const conditions = [];
@@ -364,9 +380,7 @@ var tutorsService = { registerTutor, getTutors, getTutor, addCategory };
 // src/modules/tutors/tutors.controller.ts
 var registerTutor2 = async (req, res) => {
   try {
-    const tutor = await tutorsService.registerTutor(
-      req.body
-    );
+    const tutor = await tutorsService.registerTutor(req.body);
     res.status(201).json({
       success: true,
       message: "Tutor profile created successfully",
